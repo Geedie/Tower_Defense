@@ -56,6 +56,11 @@ void ThreadFunc1(cgame& cg) {
 		}
 		else if (_ENEMY.getX() == _BULLET1.getX() && _ENEMY.getY() == _BULLET1.getY()) {
 			ctool::Draw((char*)" ", i, _P, _ENEMY);
+						break;
 		}
+		else i++;
+		Sleep(1000 / SPEED);
+		ctool::Draw((char*)" ", i - 1, _P, _ENEMY);
 	}
+	cg.setIsExist1(true);
 }
