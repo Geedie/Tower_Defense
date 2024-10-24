@@ -1,131 +1,8 @@
-/*
-OneLoneCoder.com - Command Line Game Engine
-"Who needs a frame buffer?" - @Javidx9
-
-The Original & Best :P
-
-One Lone Coder License
-~~~~~~~~~~~~~~~~~~~~~~
-- This software is Copyright (C) 2018 Javidx9
-- This is free software
-- This software comes with absolutely no warranty
-- The copyright holder is not liable or responsible for anything
-  this software does or does not
-- You use this software at your own risk
-- You can distribute this software
-- You can modify this software
-- Redistribution of this software or a derivative of this software
-  must attribute the Copyright holder named above, in a manner
-  visible to the end user
-
-License
-~~~~~~~
-One Lone Coder Console Game Engine  Copyright (C) 2018  Javidx9
-This program comes with ABSOLUTELY NO WARRANTY.
-This is free software, and you are welcome to redistribute it
-under certain conditions; See license for details.
-
-Original works located at:
-	https://www.github.com/onelonecoder
-	https://www.onelonecoder.com
-	https://www.youtube.com/javidx9
-
-GNU GPLv3
-	https://github.com/OneLoneCoder/videos/blob/master/LICENSE
-
-From Javidx9 :)
-~~~~~~~~~~~~~~~
-Hello! Ultimately I don't care what you use this for. It's intended to be
-educational, and perhaps to the oddly minded - a little bit of fun.
-Please hack this, change it and use it in any way you see fit. You acknowledge
-that I am not responsible for anything bad that happens as a result of
-your actions. However this code is protected by GNU GPLv3, see the license in the
-github repo. This means you must attribute me if you use it. You can view this
-license here: https://github.com/OneLoneCoder/videos/blob/master/LICENSE
-
-Cheers!
-
-Background
-~~~~~~~~~~
-If you've seen any of my videos - I like to do things using the windows console. It's quick
-and easy, and allows you to focus on just the code that matters - ideal when you're 
-experimenting. Thing is, I have to keep doing the same initialisation and display code
-each time, so this class wraps that up.
-
-Author
-~~~~~~
-Twitter: @javidx9	http://twitter.com/javidx9
-Blog:				http://www.onelonecoder.com
-YouTube:			http://www.youtube.com/javidx9
-
-Videos:
-~~~~~~
-Original:				https://youtu.be/cWc0hgYwZyc
-Added mouse support:	https://youtu.be/tdqc9hZhHxM
-Beginners Guide:		https://youtu.be/u5BhrA8ED0o
-
-Shout Outs!
-~~~~~~~~~~~
-Thanks to cool people who helped with testing, bug-finding and fixing!
-wowLinh, JavaJack59, idkwid, kingtatgi, Return Null, CPP Guy, MaGetzUb
-
-Last Updated: 02/07/2018
-
-Usage:
-~~~~~~
-This class is abstract, so you must inherit from it. Override the OnUserCreate() function
-with all the stuff you need for your application (for thready reasons it's best to do
-this in this function and not your class constructor). Override the OnUserUpdate(float fElapsedTime)
-function with the good stuff, it gives you the elapsed time since the last call so you
-can modify your stuff dynamically. Both functions should return true, unless you need
-the application to close.
-
-	int main()
-	{
-		// Use olcConsoleGameEngine derived app
-		OneLoneCoder_Example game;
-
-		// Create a console with resolution 160x100 characters
-		// Each character occupies 8x8 pixels
-		game.ConstructConsole(160, 100, 8, 8);
-
-		// Start the engine!
-		game.Start();
-
-		return 0;
-	}
-
-Input is also handled for you - interrogate the m_keys[] array with the virtual
-keycode you want to know about. bPressed is set for the frame the key is pressed down
-in, bHeld is set if the key is held down, bReleased is set for the frame the key
-is released in. The same applies to mouse! m_mousePosX and Y can be used to get
-the current cursor position, and m_mouse[1..5] returns the mouse buttons.
-
-The draw routines treat characters like pixels. By default they are set to white solid
-blocks - but you can draw any unicode character, using any of the colours listed below.
-
-There may be bugs! 
-
-See my other videos for examples!
-http://www.youtube.com/javidx9
-
-Lots of programs to try:
-http://www.github.com/OneLoneCoder/videos
-
-Chat on the Discord server:
-https://discord.gg/WhwHUMV
-
-Be bored by Twitch:
-http://www.twitch.tv/javidx9
-
-*/
 
 #pragma once
 #pragma comment(lib, "winmm.lib")
 
 #ifndef UNICODE
-#error Please enable UNICODE for your compiler! VS: Project Properties -> General -> \
-Character Set -> Use Unicode. Thanks! - Javidx9
 #endif
 
 #include <windows.h>
@@ -173,6 +50,13 @@ enum COLOUR
 	BG_MAGENTA		= 0x00D0,
 	BG_YELLOW		= 0x00E0,
 	BG_WHITE		= 0x00F0,
+};
+
+enum olcKey {
+	OLC_UP = 256,
+    OLC_DOWN = 257,
+    OLC_LEFT = 258,
+    OLC_RIGHT = 259,
 };
 
 enum PIXEL_TYPE
@@ -1291,23 +1175,6 @@ protected: // Audio Engine =====================================================
 		return fSample;
 	}
 
-	// The Sound Mixer - If the user wants to play many sounds simultaneously, and
-	// perhaps the same sound overlapping itself, then you need a mixer, which
-	// takes input from all sound sources for that audio frame. This mixer maintains
-	// a list of sound locations for all concurrently playing audio samples. Instead
-	// of duplicating audio data, we simply store the fact that a sound sample is in
-	// use and an offset into its sample data. As time progresses we update this offset
-	// until it is beyound the length of the sound sample it is attached to. At this
-	// point we remove the playing souind from the list.
-	//
-	// Additionally, the users application may want to generate sound instead of just
-	// playing audio clips (think a synthesizer for example) in whcih case we also
-	// provide an "onUser..." event to allow the user to return a sound for that point
-	// in time.
-	//
-	// Finally, before the sound is issued to the operating system for performing, the
-	// user gets one final chance to "filter" the sound, perhaps changing the volume
-	// or adding funky effects
 	float GetMixerOutput(int nChannel, float fGlobalTime, float fTimeStep)
 	{
 		// Accumulate sample for this channel
