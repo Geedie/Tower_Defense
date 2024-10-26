@@ -35,7 +35,8 @@ public:
         }
     }
 
-    void SetBufferSize(HANDLE hConsole, int width, int height) {
+    void SetBufferSize(int width, int height) {
+        HANDLE hStdout = GetStdHandle(STD_OUTPUT_HANDLE);
         COORD newSize;
         newSize.X = static_cast<SHORT>(width);
         newSize.Y = static_cast<SHORT>(height);
