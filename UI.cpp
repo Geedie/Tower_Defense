@@ -9,31 +9,26 @@ using namespace std;
 
 void printRankingBoard()
 {
-	/*SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 176 + 0);
-	for(int i = 0; i < 200; i++)
-		for (int j = 0; j < 70; j++)
-		{
-			ctool::GotoXY(i, j);
-			cout << " ";
-		}*/
+	ctool::setConsoleBackgroundColor(Cyan); 
 
-	ctool::setConsoleBackgroundColor(Cyan);
 
+	// Sử dụng cách đọc file để in ra màn hình console Tiêu đề Ranking
 	ifstream inFile;
 	inFile.open("RankingTitle.txt");
 	if (inFile.is_open())
 	{
 		ctool::setColor(Cyan, Black);
-		//SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 176 + 0);
 		string temp;
 		int i = 1;
 		ctool::GotoXY(40, i);
+		// Set vị trí bắt đầu là (40,1)
 		while (!inFile.eof())
 		{
 			i++;
 			getline(inFile, temp);
 			cout << temp;
 			ctool::GotoXY(40, i);
+			// Gán từng dòng và in ra màn hình đến khi hết file .txt
 		}
 	}
 	inFile.close();
@@ -81,16 +76,3 @@ void printRankingBoard()
 	ctool::setColor(Black, LightGray);
 	system("cls");
 }
-
-//int main()
-//{
-//	ctool::setLocale();
-//	ctool::resizeConsole(1400, 800);
-//	ctool::ShowConsoleCursor(false);
-//
-//	printRankingBoard();
-//
-//
-//
-//	return 0;
-//}
