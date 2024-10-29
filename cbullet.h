@@ -1,28 +1,21 @@
 #pragma once
-#include "cpoint.h"
-class cbullet {
-//_n is not the number of bullets, but the current size of the bullet path array
-int _n, _speed;
-cpoint _p[cpoint::MAP_SIZE * cpoint::MAP_SIZE];
-// map information is used to calculate the path array _p
-cpoint _m[cpoint::MAP_SIZE][cpoint::MAP_SIZE];
-cpoint _curr; // current position of the bullet
+#include "cbullet.h"
+class ctower {
+	cpoint _location;
+	cbullet _cb;
 public:
-	 cbullet();
-	 void updateMap(int, int, cpoint);
-	 cpoint getCurr() { return _curr; }
-	 void setCurr(cpoint tcurr) {
-		 if (...) _curr = tcurr;
-	 }
-	 cpoint* getP() { return _p; }
-	 int getSpeed() { return _speed; }
-	 int getN() { return _n; }
-	 void setN(int tn) {
-		 if (...)_n = tn;
-	 }
-	 void setSpeed(int tspeed) {
-		 if (...) _speed = tspeed;
-	 }
-	 int queryCFromRowCol(int, int);
-	 int calcPathBullet(cpoint);
+	ctower() { _location = { 0,0,0 }; }
+	cpoint getLocation() { return _location; }
+	void setLocation(cpoint tl) {
+		if (...) { _location = tl; }
+	}
+	void setMapForBullet(cpoint[][cpoint::MAP_SIZE]);
+	void calcPathBullet() {
+		_cb.calcPathBullet(_location);
+	}
+	// Returning references is quite dangerous. 
+	// You need to build test functions for the cbullet 
+	// class before changing the value of the internal 
+	// properties.
+	cbullet& getBullet() { return _cb; }
 };
