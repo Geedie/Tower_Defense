@@ -23,6 +23,7 @@ void ctool::setLocale() {
 	// Đặt locale để hỗ trợ ký tự Unicode
 	locale::global(locale("en_US.UTF-8"));
 	wcout.imbue(locale());
+	SetConsoleOutputCP(CP_UTF8);
 }
 void ctool::resizeConsole(int width, int height)
 {
