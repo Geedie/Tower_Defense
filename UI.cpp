@@ -2,6 +2,7 @@
 #include <fstream>
 #include <string>
 #include <conio.h>
+#include <codecvt>
 #include "ConsoleSetting.h"
 
 #include "olcConsoleGameEngine.h"
@@ -14,6 +15,9 @@ void printImageToConsole(const char* filename, int x, int y, ConsoleColor bgColo
 
 	wifstream inFile;
 	inFile.open(filename);
+
+	inFile.imbue(locale(locale(), new codecvt_utf8<wchar_t>));
+
 	if (inFile.is_open())
 	{
 		ctool::setColor(bgColor, TextColor);
@@ -32,10 +36,10 @@ void printImageToConsole(const char* filename, int x, int y, ConsoleColor bgColo
 	inFile.close();
 }
 
+
 void printRankingBoard()
 {
 	ctool::setConsoleBackgroundColor(Cyan);
-
 
 	printImageToConsole("RankingTitle.txt", 40, 1, Cyan, Black);
 
@@ -65,6 +69,7 @@ void printRankingBoard()
 			int y = cursorPos.y / 16; // 16 là giả định về kích cỡ ký tự dọc
 
 			if (x >= 1 && x <= 15 && y >= 1 && y <= 3) {
+				// Nếu di chuột vào đúng khoảng đã định, thì nút sẽ đổi màu
 				ctool::setColor(Green, DarkMagenta);
 
 				ctool::GotoXY(1, 1);
@@ -135,6 +140,8 @@ int printGameModeOption() {
 				// Kiểm tra click chuột trong vùng "Easy"
 				if (x >= 63 && x <= 81 && y >= 10 && y <= 14) {
 					printImageToConsole("EasyTitle.txt", 69, 10, Green, DarkMagenta);
+					printImageToConsole("NormalTitle.txt", 65, 16, Yellow, DarkMagenta);
+					printImageToConsole("HardTitle.txt", 69, 22, Yellow, DarkMagenta);
 
 					if (GetAsyncKeyState(VK_LBUTTON) & 0x8000)
 					{
@@ -144,7 +151,9 @@ int printGameModeOption() {
 				}
 				// Kiểm tra click chuột trong vùng "Normal"
 				else if (x >= 60 && x <= 85 && y >= 16 && y <= 20) {
+					printImageToConsole("EasyTitle.txt", 69, 10, Yellow, DarkMagenta);
 					printImageToConsole("NormalTitle.txt", 65, 16, Green, DarkMagenta);
+					printImageToConsole("HardTitle.txt", 69, 22, Yellow, DarkMagenta);
 
 					if (GetAsyncKeyState(VK_LBUTTON) & 0x8000)
 					{
@@ -154,6 +163,8 @@ int printGameModeOption() {
 				}
 				// Kiểm tra click chuột trong vùng "Hard"
 				else if (x >= 63 && x <= 81 && y >= 22 && y <= 26) {
+					printImageToConsole("EasyTitle.txt", 69, 10, Yellow, DarkMagenta);
+					printImageToConsole("NormalTitle.txt", 65, 16, Yellow, DarkMagenta);
 					printImageToConsole("HardTitle.txt", 69, 22, Green, DarkMagenta);
 
 					if (GetAsyncKeyState(VK_LBUTTON) & 0x8000)
@@ -169,7 +180,7 @@ int printGameModeOption() {
 					printImageToConsole("HardTitle.txt", 69, 22, Yellow, DarkMagenta); // (60, 22) -> (79, 26)
 				}
 			}
-			Sleep(10);  // Giảm tải CPU
+			Sleep(50);  // Giảm tải CPU
 		}
 
 		ctool::setColor(Blue, Yellow);
@@ -266,22 +277,87 @@ int printGameModeOption() {
 	return selectedOption;
 }
 
-//int main()
-//{
-//	ctool::setLocale();
-//	//ctool::resizeConsole(1400, 800);
-//	ctool::ShowConsoleCursor(false);
-//
-//	ConsoleSetting setting;
-//	setting.ShowScrollbar(false);
-//	setting.SetBufferSize(180, 45);
-//	setting.SetWindowSize(180, 45);
-//
-//
-//	printRankingBoard();
-//	cout << printGameModeOption();
-//	ctool::setColor(Black, LightGray);
-//
-//
-//	return 0;
-//}
+int printPlayMenu()
+{
+	system("cls");  // Xóa màn hình trước khi in ra
+
+	ctool::setConsoleBackgroundColor(Cyan);
+
+	printImageToConsole("PlayTitle.txt", 60, 1, Cyan, DarkRed);
+
+	printImageToConsole("PlayNewTitle.txt", 20, 10, Yellow, DarkMagenta);
+	printImageToConsole("PlayRecentTitle.txt", 80, 10, Yellow, DarkMagenta);
+
+	POINT cursorPos;
+	HWND consoleWindow = GetConsoleWindow();
+	int selectedOption = 0;
+
+	// Vòng lặp kiểm tra sự kiện chuột
+	while (true) {
+		if (GetCursorPos(&cursorPos) && ScreenToClient(consoleWindow, &cursorPos)) {
+			int x = cursorPos.x / 8;  // 8 là giả định về kích cỡ ký tự ngang
+			int y = cursorPos.y / 16; // 16 là giả định về kích cỡ ký tự dọc
+
+			if (x >= 18 && x <= 63 && y >= 10 && y <= 24) {
+				printImageToConsole("PlayNewTitle.txt", 20, 10, Green, DarkMagenta);
+				printImageToConsole("PlayRecentTitle.txt", 80, 10, Yellow, DarkMagenta);
+
+				if (GetAsyncKeyState(VK_LBUTTON) & 0x8000)
+				{
+					selectedOption = 1;
+					break;
+				}
+			}
+			else if (x >= 73 && x <= 124 && y >= 10 && y <= 24) {
+				printImageToConsole("PlayRecentTitle.txt", 80, 10, Green, DarkMagenta);
+				printImageToConsole("PlayNewTitle.txt", 20, 10, Yellow, DarkMagenta);
+
+				if (GetAsyncKeyState(VK_LBUTTON) & 0x8000)
+				{
+					selectedOption = 2;
+					break;
+				}
+			}
+			else {
+				printImageToConsole("PlayNewTitle.txt", 20, 10, Yellow, DarkMagenta);
+				printImageToConsole("PlayRecentTitle.txt", 80, 10, Yellow, DarkMagenta);
+			}
+		}
+		Sleep(50);
+	}
+
+	//_getch();
+	ctool::setColor(Black, LightGray);
+	system("cls");
+	return selectedOption;
+}
+
+/*int main()
+{
+	ctool::setLocale();
+	//ctool::resizeConsole(1400, 800);
+	ctool::ShowConsoleCursor(false);
+
+	ConsoleSetting setting;
+	setting.ShowScrollbar(false);
+	setting.SetBufferSize(180, 45);
+	setting.SetWindowSize(180, 45);
+
+
+	//printRankingBoard();
+	switch (printPlayMenu())
+	{
+	case 1:
+		cout << printGameModeOption();
+		break;
+	case 2:
+		break;
+	case 3:
+		break;
+	default:
+		break;
+	}
+
+	ctool::setColor(Black, LightGray);
+	return 0;
+}*/

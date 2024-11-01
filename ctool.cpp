@@ -24,6 +24,7 @@ void ctool::setLocale() {
 	locale::global(locale("en_US.UTF-8"));
 	wcout.imbue(locale());
 	SetConsoleOutputCP(CP_UTF8);
+	SetConsoleCP(CP_UTF8);
 }
 void ctool::resizeConsole(int width, int height)
 {

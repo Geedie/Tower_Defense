@@ -12,6 +12,6 @@ using namespace std;
 
 void printRankingBoard();
 int printGameModeOption();
-
+int printPlayMenu();
 
 #endif
