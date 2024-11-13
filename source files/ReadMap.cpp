@@ -1,4 +1,4 @@
-﻿#include "Map.h"
+﻿#include "ReadMap.h"
 
 void Map::ResizeConsole(int row, int col) {
     // Lấy handle của console
