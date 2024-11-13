@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Bullet.h"
-#include "Enemy.h"
+#include "cbullet.h"
+#include "cbnemy.h"
 // Đối tượng tháp
 class Tower {
 private:

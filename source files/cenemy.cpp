@@ -1,4 +1,4 @@
-﻿#include "Enemy.h"
+﻿#include "cenemy.h"
 
 int Enemy::XEne() const {
     return x;

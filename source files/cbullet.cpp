@@ -1,4 +1,4 @@
-﻿#include "Bullet.h"
+﻿#include "cbullet.h"
 
 
 float Bullet::XBull() const {
