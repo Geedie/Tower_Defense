@@ -5,7 +5,10 @@
 #include <codecvt>
 #include "ConsoleSetting.h"
 
-#include "olcConsoleGameEngine.h"
+#include <mmsystem.h>
+
+#pragma comment(lib, "winmm.lib")
+
 
 using namespace std;
 
@@ -41,6 +44,7 @@ void printRankingBoard()
 {
 	ctool::setConsoleBackgroundColor(Cyan);
 
+
 	printImageToConsole("RankingTitle.txt", 40, 1, Cyan, Black);
 
 	ctool::GotoXY(0, 8);
@@ -68,8 +72,8 @@ void printRankingBoard()
 			int x = cursorPos.x / 8;  // 8 là giả định về kích cỡ ký tự ngang
 			int y = cursorPos.y / 16; // 16 là giả định về kích cỡ ký tự dọc
 
-			if (x >= 1 && x <= 15 && y >= 1 && y <= 3) {
-				// Nếu di chuột vào đúng khoảng đã định, thì nút sẽ đổi màu
+			// In ra màn hình console nút Back to menu, cho phép người chơi quay trở lại giao diện menu
+			if (x >= 1 && x <= 15 && y >= 1 && y <= 3) { // Kiểm tra vị trí con chuột
 				ctool::setColor(Green, DarkMagenta);
 
 				ctool::GotoXY(1, 1);
@@ -79,7 +83,7 @@ void printRankingBoard()
 				ctool::GotoXY(1, 3);
 				wcout << L"╚══════════════╝";
 
-				if (GetAsyncKeyState(VK_LBUTTON) & 0x8000)
+				if (GetAsyncKeyState(VK_LBUTTON) & 0x8000) // Kiểm tra click chuột
 				{
 					break;
 				}
@@ -127,6 +131,7 @@ int printGameModeOption() {
 	// Vòng lặp kiểm tra sự kiện chuột
 	while (true) {
 	ChooseOption:
+		bool Exit = false;
 		while (true) {
 			if (GetCursorPos(&cursorPos) && ScreenToClient(consoleWindow, &cursorPos)) {
 				int x = cursorPos.x / 8;  // 8 là giả định về kích cỡ ký tự ngang
@@ -179,9 +184,41 @@ int printGameModeOption() {
 					printImageToConsole("NormalTitle.txt", 65, 16, Yellow, DarkMagenta);// (60, 16) -> (87, 20)
 					printImageToConsole("HardTitle.txt", 69, 22, Yellow, DarkMagenta); // (60, 22) -> (79, 26)
 				}
+
+				// In ra màn hình console nút Back to menu, cho phép người chơi quay trở lại giao diện menu
+				if (x >= 1 && x <= 15 && y >= 1 && y <= 3) { // Kiểm tra vị trí con chuột
+					ctool::setColor(Green, DarkMagenta);
+
+					ctool::GotoXY(1, 1);
+					wcout << L"╔══════════════╗";
+					ctool::GotoXY(1, 2);
+					wcout << L"║ Back to Menu ║";
+					ctool::GotoXY(1, 3);
+					wcout << L"╚══════════════╝";
+
+					if (GetAsyncKeyState(VK_LBUTTON) & 0x8000) // Kiểm tra click chuột
+					{
+						selectedOption = 0;
+						Exit = true;
+						break;
+					}
+				}
+				else {
+					ctool::setColor(LightGray, DarkMagenta);
+
+					ctool::GotoXY(1, 1);
+					wcout << L"╔══════════════╗";
+					ctool::GotoXY(1, 2);
+					wcout << L"║ Back to Menu ║";
+					ctool::GotoXY(1, 3);
+					wcout << L"╚══════════════╝";
+				}
 			}
 			Sleep(50);  // Giảm tải CPU
 		}
+
+		if (Exit)
+			break;
 
 		ctool::setColor(Blue, Yellow);
 		for (int i = 29; i < 36; i++)
@@ -322,42 +359,86 @@ int printPlayMenu()
 				printImageToConsole("PlayNewTitle.txt", 20, 10, Yellow, DarkMagenta);
 				printImageToConsole("PlayRecentTitle.txt", 80, 10, Yellow, DarkMagenta);
 			}
+
+			// In ra màn hình console nút Back to menu, cho phép người chơi quay trở lại giao diện menu
+			if (x >= 1 && x <= 15 && y >= 1 && y <= 3) { // Kiểm tra vị trí con chuột
+				ctool::setColor(Green, DarkMagenta);
+
+				ctool::GotoXY(1, 1);
+				wcout << L"╔══════════════╗";
+				ctool::GotoXY(1, 2);
+				wcout << L"║ Back to Menu ║";
+				ctool::GotoXY(1, 3);
+				wcout << L"╚══════════════╝";
+
+				if (GetAsyncKeyState(VK_LBUTTON) & 0x8000) // Kiểm tra click chuột
+				{
+					selectedOption = 0;
+					break;
+				}
+			}
+			else {
+				ctool::setColor(LightGray, DarkMagenta);
+
+				ctool::GotoXY(1, 1);
+				wcout << L"╔══════════════╗";
+				ctool::GotoXY(1, 2);
+				wcout << L"║ Back to Menu ║";
+				ctool::GotoXY(1, 3);
+				wcout << L"╚══════════════╝";
+			}
 		}
+
 		Sleep(50);
 	}
 
-	//_getch();
 	ctool::setColor(Black, LightGray);
 	system("cls");
 	return selectedOption;
 }
 
-/*int main()
-{
-	ctool::setLocale();
-	//ctool::resizeConsole(1400, 800);
-	ctool::ShowConsoleCursor(false);
-
-	ConsoleSetting setting;
-	setting.ShowScrollbar(false);
-	setting.SetBufferSize(180, 45);
-	setting.SetWindowSize(180, 45);
-
-
-	//printRankingBoard();
-	switch (printPlayMenu())
-	{
-	case 1:
-		cout << printGameModeOption();
-		break;
-	case 2:
-		break;
-	case 3:
-		break;
-	default:
-		break;
-	}
-
-	ctool::setColor(Black, LightGray);
-	return 0;
-}*/
+//int main()
+//{
+//	ctool::setLocale();
+//	//ctool::resizeConsole(1400, 800);
+//	ctool::ShowConsoleCursor(false);
+//
+//	ConsoleSetting setting;
+//	setting.ShowScrollbar(false);
+//	setting.SetBufferSize(180, 45);
+//	setting.SetWindowSize(180, 45);
+//
+//	PlaySound(TEXT("BgSound.wav"), NULL, SND_FILENAME | SND_ASYNC | SND_LOOP);
+//
+//	//printRankingBoard();
+//
+//	/*while (true)
+//	{*/
+//		switch (printPlayMenu())
+//		{
+//		case 1:
+//			switch (printGameModeOption())
+//			{
+//			case 1:
+//				PlaySound(NULL, 0, 0);
+//				printRankingBoard();
+//				break;
+//			default:
+//				break;
+//			}
+//
+//			//cout << printGameModeOption();
+//			break;
+//		case 2:
+//			break;
+//		default:
+//			break;
+//		}
+//	/*}*/
+//	
+//	
+//	
+//	
+//	ctool::setColor(Black, LightGray);
+//	return 0;
+//}
