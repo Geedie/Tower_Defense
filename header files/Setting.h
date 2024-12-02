@@ -8,13 +8,15 @@
 #include <windows.h>
 #include <fstream>
 #include <vector>
-
+#include "consoleHandle.h"
+#include "Menu.h"
+#include "Music.h"
 
 using namespace std;
 
 class Setting {
 public:
-	void SettingControl();
+	int SettingControl();
 };
 
 #endif

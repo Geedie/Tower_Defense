@@ -80,8 +80,8 @@ void printTitle() {
     drawTitle(100, positionX - 4, startY - 18); // Draw title
 }
 
-void printOption() {
-    static const int boxWidth = 30;   // Width of the menu boxes
+int printOption() {
+    static const int boxWidth = 16;   // Width of the menu boxes
     static int consoleWidth = getConsoleWidth(); // Get the width of the console once
     static int consoleHeight = getConsoleHeight(); // Get the height of the console once
     static int startY = consoleHeight / 2; // Center Y position
@@ -94,6 +94,7 @@ void printOption() {
     const char* playFileName = "PlayOpt.txt";
     const char* settingFileName = "SettingOpt.txt";
     const char* rankFileName = "RankOpt.txt";
+    const char* exitFileName = "Exit.txt";
 
     // Preload the files at the start
     ifstream playFile(playFileName);
@@ -101,6 +102,7 @@ void printOption() {
     ifstream rankFile(rankFileName);
 
     bool leftButtonPressed = false;
+    int selection = 0;
 
     while (true) {
         // Get cursor position
@@ -110,41 +112,80 @@ void printOption() {
             int y = cursorPos.y / 16; // Assuming 16 pixels per line
 
             // Determine which box to highlight based on cursor position
-            bool isPlayHighlighted = (x >= positionX - 14 && x <= positionX + boxWidth - 7 && y >= startY - 8 && y <= startY);
-            bool isSettingHighlighted = (x >= positionX - 14 && x <= positionX + boxWidth - 7 && y >= startY && y <= startY + 8);
-            bool isRankHighlighted = (x >= positionX - 14 && x <= positionX + boxWidth - 7 && y >= startY + 8 && y <= startY + 16);
+            bool isPlayHighlighted = (x >= positionX - 14 && x <= positionX + boxWidth - 7 && y > startY - 9 && y < startY - 3);
+            bool isSettingHighlighted = (x >= positionX - 14 && x <= positionX + boxWidth - 7 && y > startY - 1 && y < startY + 5);
+            bool isRankHighlighted = (x >= positionX - 14 && x <= positionX + boxWidth - 7 && y > startY + 7 && y < startY + 13);
+            bool isExitHighlighted = (x >= positionX - 14 && x <= positionX + boxWidth - 7 && y > startY + 15 && y < startY + 21);
 
             // Draw boxes based on current highlight states
-            drawBox(playFileName, boxWidth + 14, positionX - 7, startY - 8, isPlayHighlighted);
+            drawBox(playFileName, boxWidth + 2, positionX - 2, startY - 8, isPlayHighlighted);
             drawBox(settingFileName, boxWidth + 14, positionX - 7, startY, isSettingHighlighted);
-            drawBox(rankFileName, boxWidth + 14, positionX - 7, startY + 8, isRankHighlighted);
+            drawBox(rankFileName, boxWidth + 2, positionX - 2, startY + 8, isRankHighlighted);
+            drawBox(exitFileName, boxWidth + 2, positionX - 2, startY + 16, isExitHighlighted);
 
             // Handle left button click only for the settings box
-            if (isSettingHighlighted && (GetAsyncKeyState(VK_LBUTTON) & 0x8000)) {
+            if (isPlayHighlighted && (GetAsyncKeyState(VK_LBUTTON) & 0x8000)) {
                 if (!leftButtonPressed) { // Trigger only on the first press
                     leftButtonPressed = true;
-                    setConsoleBackgroundColor(11); // Set background color
-                    clearConsole(); // Clear the console before changing to settings
-                    Setting setting; // Assuming Setting is a valid class
-                    setting.SettingControl(); // Call the settings control function
+                    selection = 0; // Set selection to the setting box
+                    break;
                 }
             }
             else {
                 leftButtonPressed = false; // Reset if button is released
             }
+
+            // Handle left button click only for the settings box
+            if (isSettingHighlighted && (GetAsyncKeyState(VK_LBUTTON) & 0x8000)) {
+                if (!leftButtonPressed) { // Trigger only on the first press
+                    leftButtonPressed = true;
+                    selection = 1; // Set selection to the setting box
+                    break;
+                }
+            }
+            else {
+                leftButtonPressed = false; // Reset if button is released
+            }
+
+            // Handle left button click only for the settings box
+            if (isRankHighlighted && (GetAsyncKeyState(VK_LBUTTON) & 0x8000)) {
+                if (!leftButtonPressed) { // Trigger only on the first press
+                    leftButtonPressed = true;
+                    selection = 2; // Set selection to the setting box
+                    break;
+                }
+            }
+            else {
+                leftButtonPressed = false; // Reset if button is released
+            }
+
+            // Handle left button click only for the settings box
+            if (isExitHighlighted && (GetAsyncKeyState(VK_LBUTTON) & 0x8000)) {
+                if (!leftButtonPressed) { // Trigger only on the first press
+                    leftButtonPressed = true;
+                    selection = 3; // Set selection to the setting box
+                    break;
+                }
+            }
+            else {
+                leftButtonPressed = false; // Reset if button is released
+            }
+
         }
 
         Sleep(1); // Adjust sleep time as needed
-	}
+    }
 
     // Close the file streams when done (this point may not be reached in an infinite loop)
     playFile.close();
     settingFile.close();
     rankFile.close();
+
+    return selection;
 }
 
 // Prints the entire menu by calling drawBox for each section.
-void Menu::MenuControl() {
+int Menu::MenuControl() {
     HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 
     //Hide cursor
@@ -156,5 +197,5 @@ void Menu::MenuControl() {
     setConsoleBackgroundColor(11); // Set background color
 
     printTitle(); // Draw title
-    printOption(); // Draw options
+    return printOption(); // Draw options
 }

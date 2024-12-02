@@ -1,6 +1,4 @@
 #include "Setting.h"
-#include "consoleHandle.h"
-#include "Menu.h"
 
 // Draws a box with text from a file at specified coordinates.
 void drawBoxSetting(const char* filename, int width, int posX, int posY, bool isSelected) {
@@ -73,7 +71,7 @@ void printTitleSetting() {
     drawTitleSetting(100, positionX - 13, startY - 18); // Draw title
 }
 
-void printOptionSetting() {
+int printOptionSetting() {
     static const int boxWidth = 30;   // Width of the menu boxes
     static const int consoleWidth = getConsoleWidth(); // Get the width of the console once
     static const int consoleHeight = getConsoleHeight(); // Get the height of the console once
@@ -83,6 +81,8 @@ void printOptionSetting() {
     HWND consoleWindow = GetConsoleWindow();
     bool leftButtonPressed = false; // Track the left button state
 
+    int selection = 0; // Current selection
+
     while (true) {
         // Get cursor position
         POINT cursorPos;
@@ -91,23 +91,31 @@ void printOptionSetting() {
             int y = cursorPos.y / 16; // Assuming 16 pixels per line
 
             // Determine which boxes to highlight based on cursor position
-            bool drawMusic = (x >= positionX - 14 && x <= positionX + boxWidth - 7 && y >= startY - 8 && y <= startY);
-            bool drawGraphics = (x >= positionX - 14 && x <= positionX + boxWidth - 7 && y >= startY && y <= startY + 8);
-            bool drawBackToMenu = (x >= positionX - 14 && x <= positionX + boxWidth - 7 && y >= startY + 8 && y <= startY + 16);
+            bool drawMusic = (x >= positionX - 7 && x <= positionX + boxWidth - 17 && y > startY - 9 && y < startY - 2);
+            bool drawGraphics = (x >= positionX - 12 && x <= positionX + boxWidth - 12 && y > startY - 1 && y < startY + 6);
+            bool drawBackToMenu = (x >= positionX - 17 && x <= positionX + boxWidth - 4 && y > startY + 7 && y < startY + 14);
 
             // Draw options
-            drawBoxSetting("Music.txt", boxWidth + 14, positionX - 7, startY - 8, drawMusic);
-            drawBoxSetting("Graphics.txt", boxWidth + 14, positionX - 7, startY, drawGraphics);
-            drawBoxSetting("BackToMenu.txt", boxWidth + 14, positionX - 7, startY + 8, drawBackToMenu);
+            drawBoxSetting("Music.txt", boxWidth - 8, positionX + 3, startY - 8, drawMusic);
+            drawBoxSetting("Graphics.txt", boxWidth + 4, positionX - 3, startY, drawGraphics);
+            drawBoxSetting("BackToMenu.txt", boxWidth + 16, positionX - 8, startY + 8, drawBackToMenu);
 
             // Handle left button click for Back to Menu
             if (drawBackToMenu && (GetAsyncKeyState(VK_LBUTTON) & 0x8000)) {
                 if (!leftButtonPressed) { // Only trigger if it was not previously pressed
                     leftButtonPressed = true;
-                    setConsoleBackgroundColor(11); // Set background color
-                    clearConsole(); // Clear the console
-                    Menu menu; // Assuming Menu is a valid class
-                    menu.MenuControl(); // Call the menu control function
+                    selection = 0;
+                    break;
+                }
+            }
+            else {
+                leftButtonPressed = false; // Reset if button is released
+            }
+            if (drawMusic && (GetAsyncKeyState(VK_LBUTTON) & 0x8000)) {
+                if (!leftButtonPressed) { // Only trigger if it was not previously pressed
+                    leftButtonPressed = true;
+                    selection = 1;
+                    break;
                 }
             }
             else {
@@ -117,9 +125,10 @@ void printOptionSetting() {
 
         Sleep(10); // Adjust sleep time as needed
     }
+    return selection;
 }
 
-void Setting::SettingControl() {
+int Setting::SettingControl() {
     HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 
     //Hide cursor
@@ -130,6 +139,6 @@ void Setting::SettingControl() {
 
     setConsoleBackgroundColor(11); // Set background color
 
-	printTitleSetting();
-	printOptionSetting();
+    printTitleSetting();
+    return printOptionSetting();
 }

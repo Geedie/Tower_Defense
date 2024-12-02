@@ -15,6 +15,6 @@ using namespace std;
 class Menu
 {
 public:
-	void MenuControl();
+	int MenuControl();
 };
 #endif
